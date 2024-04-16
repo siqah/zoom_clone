@@ -1,5 +1,9 @@
+"use client"
+
+import { tokenProvider } from '@/actions/stream.actions';
 import { useUser } from '@clerk/nextjs';
 import {StreamVideoClient, StreamVideo} from '@stream-io/video-react-sdk';
+import  Loader from '@/components/Loader';
 import { ReactNode, useEffect } from 'react';
 import { useState } from 'react';
   
@@ -22,15 +26,18 @@ import { useState } from 'react';
                 name: user?.username || user?.id,
                 image: user?.imageUrl,
             },
-            tokenProvider
+            tokenProvider,
          });
 
+         setVideoClient(client);
+
     },[user, isLoaded])
+    if(!videoClient) return <Loader />;
 
 
     return (
       <StreamVideo client={videoClient}>
-           
+           {children}
       </StreamVideo>
     );
   };
