@@ -8,8 +8,6 @@ import '@stream-io/video-react-sdk/dist/css/styles.css';
 import { Toaster } from "@/components/ui/toaster"
 
 
-
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -36,7 +34,6 @@ export default function RootLayout({
             colorBackground: "#1c1f2e",
             colorInputBackground: "#252a41",
             colorInputText: "#fff",
-
           }
          }}
          >
