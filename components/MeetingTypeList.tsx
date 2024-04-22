@@ -87,7 +87,7 @@ const MeetingTypeList = () => {
         title="New Meeting"
         description="Start an instant meeting"
         className='bg-orange-1'
-        handleClick={() => setMeetingState('isInstantMeeting')}
+        handleClick={() => setMeetingState('isInstaantMeeting')}
       />
       <HomeCard
         img="/icons/join-meeting.svg"
@@ -170,14 +170,14 @@ const MeetingTypeList = () => {
           handleClick ={createMeeting}
         />
 
-        <MeetingModal
+        {/* <MeetingModal
         isOpen={meetingState === 'isInstantMeeting'}
         onClose={() => setMeetingState(undefined)}
         title="Start an Instant Meeting"
         className="text-center"
         buttonText="Start Meeting"
         handleClick={createMeeting}
-      />
+      /> */}
     </section>
   )
 }
