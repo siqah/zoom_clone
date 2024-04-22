@@ -1,58 +1,52 @@
-import { useState, useEffect } from 'react';
-import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk'
+import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk';
 
 export const useGetCalls = () => {
-    const [calls, setCalls] = useState<Call[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUser();
+  const client = useStreamVideoClient();
+  const [calls, setCalls] = useState<Call[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
-    const client = useStreamVideoClient();
-    const {user} = useUser();
+  useEffect(() => {
+    const loadCalls = async () => {
+      if (!client || !user?.id) return;
+      
+      setIsLoading(true);
 
-    useEffect(() => {
-        const loadCalls = async () => {
-             if (!client || !user?.id) return;
+      try {
+        // https://getstream.io/video/docs/react/guides/querying-calls/#filters
+        const { calls } = await client.queryCalls({
+          sort: [{ field: 'starts_at', direction: -1 }],
+          filter_conditions: {
+            starts_at: { $exists: true },
+            $or: [
+              { created_by_user_id: user.id },
+              { members: { $in: [user.id] } },
+            ],
+          },
+        });
 
-             setIsLoading(true);
+        setCalls(calls);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-             try {
-                const {calls} = await client.queryCalls({
-                    sort: [{field: 'starts_at', direction: -1}],
-                    filter_conditions: {
-                        start_at: {$exist: true},
-                        $or: [
-                            { created_by_user_id: user.id },
-                            {members: {$in: [user.id]}},
-                        ]
-                    }
-                });
+    loadCalls();
+  }, [client, user?.id]);
 
-                setCalls(calls);
-             }catch(error){
-                console.error(error);
-             }finally{
-                setIsLoading(false);
-             }
-        }
-        loadCalls();
+  const now = new Date();
 
-    },[client, user?.id]);
+  const endedCalls = calls?.filter(({ state: { startsAt, endedAt } }: Call) => {
+    return (startsAt && new Date(startsAt) < now) || !!endedAt
+  })
 
-const now = new Date();
+  const upcomingCalls = calls?.filter(({ state: { startsAt } }: Call) => {
+    return startsAt && new Date(startsAt) > now
+  })
 
-const endedCalls = calls.filter(({state: {startsAt, endedAt}}: Call) => {
-    return (startsAt && new Date(startsAt) < now || !!endedAt);
-});
-const upcomingCalls = calls.filter(({state: {startsAt}}: Call) => {
-    return startsAt && new Date(startsAt) > now 
-});
-
-
-return {
-endedCalls,
-upcomingCalls,
-callRecordings: calls,
-isLoading,
-}
-}
-
+  return { endedCalls, upcomingCalls, callRecordings: calls, isLoading }
+};
