@@ -9,7 +9,6 @@ import { useUser } from '@clerk/nextjs'
 import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk'
 import { useToast } from "@/components/ui/use-toast"
 import { Textarea } from "@/components/ui/textarea"
-import config from '@/tailwind.config'
 import ReactDatePicker from 'react-datepicker';
 
 
@@ -87,28 +86,29 @@ const MeetingTypeList = () => {
         title="New Meeting"
         description="Start an instant meeting"
         className='bg-orange-1'
-        handleClick={() => setMeetingState('isInstaantMeeting')}
-      />
-      <HomeCard
-        img="/icons/join-meeting.svg"
-        title="Join Meeting"
-        description="via invitation link"
-        className="bg-blue-1"
         handleClick={() => setMeetingState('isJoiningMeeting')}
       />
+     
       <HomeCard
         img="/icons/schedule.svg"
         title="Schedule Meeting"
         description="Plan your meeting"
-        className="bg-purple-1"
+        className="bg-blue-1"
         handleClick={() => setMeetingState('isScheduleMeeting')}
       />
       <HomeCard
         img="/icons/recordings.svg"
         title="View Recordings"
         description="Meeting Recordings"
-        className="bg-yellow-1"
+        className="bg-purple-1"
         handleClick={() => router.push('/recordings')}
+      />
+       <HomeCard
+        img="/icons/join-meeting.svg"
+        title="Join Meeting"
+        description="via invitation link"
+        className="bg-yellow-1"
+        handleClick={() => setMeetingState('isInstantMeeting')}
       />
 
 {!callDetail ? (
